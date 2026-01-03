@@ -1,62 +1,69 @@
-# 🏃‍♂️ Garmin Shoe Performance Audit: Causal Inference in Personal Athletics
+# Garmin Data Analysis & AI Coach
 
-> **Project Status:** Complete (Transitioning to ML/Predictive Modeling)
-> **Methodology:** OLS Regression & PCA (Econometrics)
+A local-first data pipeline that ingests your Garmin Connect history, calculates physiological metrics (ACWR, TRIMP), and uses a local AI model (DeepSeek via Ollama) to provide personalized training advice without sending your health data to the cloud.
 
-## 🎯 Objective
-To determine the "true" performance impact of my running shoe rotation by controlling for physiological and environmental confounders. This project moves beyond simple "Average Pace" comparisons (which suffer from selection bias) to isolate the mechanical efficiency of specific footwear.
+## 🚀 Features
 
-## 🧐 The Problem: "The Strava Bias"
-Most running apps simply average your pace per shoe. This is flawed because:
-1.  **Selection Bias:** Faster shoes are chosen for race days; slower shoes for recovery.
-2.  **Terrain Bias:** Stable shoes are often worn on hilly or uneven routes.
-3.  **Fatigue:** A "slow" shoe might just be a victim of tired legs (high acute load).
+* **Data Ingestion:** Securely fetches activity data using the `garminconnect` API.
+* **Physiological Analysis:** Calculates Acute Chronic Workload Ratio (ACWR) and TRIMP scores to detect overtraining risks.
+* **AI Coach:** Uses a local LLM (DeepSeek-R1) to analyze your metrics and chat with you about your training status.
+* **Privacy First:** All health data and AI processing stay on your local machine.
 
-## 🧪 Methodology: Dual-Model OLS
-To isolate the shoe's effect, I built a rigorous feature set controlling for fitness, fatigue, and elevation. I then ran two competing regression models:
+## 🛠️ Prerequisites
 
-### 1. Feature Engineering
-* **Aerobic Power Factor (PCA):** Combined `Efficiency` (Watts/HR) and `VO2 Max` into a single component to eliminate multicollinearity.
-* **Training Stress Balance (TSB):** Split mileage into `fitness_42_day_km` (Chronic Load) and `fatigue_7_day_km` (Acute Load) with a `shift(1)` to prevent data leakage.
-* **Relative Climb:** Normalized elevation gain (`gain / distance`) to fairly compare hilly vs. flat runs.
-
-### 2. The Models
-* **Model A (Mechanical Gain):** Controls for **Stride Length & Cadence**.
-    * *Question:* "If I run with the exact same mechanics, does the shoe make me faster?"
-* **Model B (Net Performance):** Removes biomechanical controls.
-    * *Question:* "Does the shoe encourage a gait change (e.g., faster turnover) that leads to speed?"
-
-## 📊 Key Findings (The "Stability is Speed" Verdict)
-
-The analysis yielded a statistically significant conclusion that contradicted marketing claims but aligned with my specific biomechanics (Midfoot Striker / Stability Needs).
-
-### 🏆 The Winner: Saucony Tempus
-* **Model A (Mechanical):** `coef = +0.0009`, **p = 0.007** (Significant)
-* **Model B (Net):** `coef = +0.0059`, **p = 0.012** (Significant)
-* **Conclusion:** The Tempus provided measurable mechanical efficiency improvements. The "bucket seat" stability frame reduced lateral energy leakage, allowing for more efficient force transfer.
-
-### 📉 The Loser: Saucony Endorphin Speed 3
-* **Model A (Mechanical):** `coef = -0.0003`, **p = 0.450** (Not Significant)
-* **Model B (Net):** `coef = +0.0044`, **p = 0.173** (Not Significant)
-* **Conclusion:** Despite the nylon plate, the shoe provided **no statistically significant advantage** over a standard daily trainer.
-* **The "Floorboard on a Waterbed" Effect:** Using a rigid orthotic (Superfeet Green) on the soft/unstable foam of the Speed 3 likely caused adductor fatigue as stabilizers worked to control the platform, negating any energy return from the plate.
-
-## 🛠️ Tech Stack & Setup
-* **Language:** Python 3.12+
-* **Libraries:** `pandas`, `statsmodels`, `scikit-learn`, `numpy`
-* **Data Source:** Garmin Connect (JSON exports)
-
-### Quick Start
-1.  Clone the repo.
-2.  Install dependencies:
+1.  **Python 3.10+**
+2.  **Ollama** installed and running ([Download Ollama](https://ollama.com/)).
+3.  **DeepSeek Model:** Pull the model you intend to use:
     ```bash
-    pip install pandas statsmodels scikit-learn numpy
-    ```
-3.  Place your Garmin JSON data in `data/raw/`.
-4.  Run the analysis:
-    ```bash
-    python analysis_v2.py
+    ollama pull deepseek-r1:14b
     ```
 
-## 🔄 Future Work
-This project successfully applied Causal Inference to historical data. The next phase will pivot to **Machine Learning (XGBoost/LSTM)** to build a predictive "AI Coach" that forecasts recovery scores and suggests workout modifications using Generative AI.
+## 📦 Installation
+
+1.  Clone the repository:
+    ```bash
+    git clone [https://github.com/economize/garmin_shoe_analysis.git](https://github.com/economize/garmin_shoe_analysis.git)
+    cd garmin_shoe_analysis
+    ```
+
+2.  Install Python dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+## 🏃 Usage
+
+Run the pipeline in sequence:
+
+```bash
+# 1. Fetch latest data from Garmin
+python src/ingestion.py
+
+# 2. Calculate metrics (ACWR/TRIMP)
+python src/physio.py
+
+# 3. Chat with your AI Coach
+python src/coach.py
+
+### The "Green Light" System
+The analysis script calculates your **Acute:Chronic Workload Ratio (ACWR)**:
+* **< 0.80:** Undertraining (Risk of detraining)
+* **0.80 - 1.30:** 🟢 **Sweet Spot** (Optimal training load)
+* **> 1.50:** 🔴 **Danger Zone** (High injury risk)
+
+## ⚠️ Disclaimer
+This tool is for informational purposes only. The "Coach" is an AI model and can hallucinate. Always consult a real medical professional or physical therapist for injury advice.
+---
+
+### 3. Terminal Commands (PowerShell)
+Once you have saved those two files, run these commands to push the changes to GitHub:
+
+```powershell
+# 1. Add the new files
+git add requirements.txt README.md
+
+# 2. Commit
+git commit -m "Update docs: Add requirements and Coach documentation"
+
+# 3. Push to GitHub
+git push origin main
