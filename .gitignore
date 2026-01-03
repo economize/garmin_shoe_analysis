@@ -1,8 +1,27 @@
-# Ignore the data folder where private JSON/FIT files live
-data/
-
-# Ignore Jupyter Notebook checkpoints
+# --- Python & Environment ---
+__pycache__/
+*.pyc
+venv/
+.env
+.env.txt
 .ipynb_checkpoints/
 
-# Ignore local environment files
-.env
+# --- IDE Settings ---
+.vscode/
+.vs/
+*.slnx
+*.user
+
+# --- DATA (CRITICAL) ---
+data/
+*.zip
+*.csv
+*.json
+*.db
+*.sqlite
+
+# --- Credentials ---
+tokens.json
+secret.json
+config.py
+.garmin_connect_session
